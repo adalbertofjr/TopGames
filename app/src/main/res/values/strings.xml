@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Top Games</string>
+
+    <!-- Title -->
+    <string name="title_game_mock">Counter Strike</string>
+
+    <!-- Description -->
+    <string name="description_imagem_da_capa_do_jogo">Imagem da Capa do Jogo</string>
+
 </resources>
