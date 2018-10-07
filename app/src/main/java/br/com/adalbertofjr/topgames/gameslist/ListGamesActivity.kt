@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.util.Log
 import android.view.View
 import android.widget.AbsListView
@@ -52,7 +54,7 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
 
 
         //Widgets
-        toolbar.setTitle(getString(R.string.app_name))
+        toolbar.title = getString(R.string.app_name)
         toolbar.setTitleTextColor(Color.WHITE)
 
         rv_game_list.setHasFixedSize(true)
@@ -60,22 +62,27 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
         rv_game_list.layoutManager = layoutManager
         rv_game_list.adapter = adapter
 
-        rv_game_list.addOnScrollListener(onScrollListener())
+        rv_game_list.addOnScrollListener(this.onScrollListener())
+
+        swp_refresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimary))
+        swp_refresh.setOnRefreshListener { presenter.onRefresh() }
 
         //Carregar Games
-        presenter.loadGames()
+        presenter.loadGames(true)
     }
 
     override fun onGameClickListener(game: Game) {
         presenter.onClickGameDetail(game)
     }
 
-    override fun showLoading(show: Boolean) {
-        Log.d(LOG_TAG, "showLoading: ${show}")
+    override fun showLoading(show: Boolean, refresh: Boolean) {
+        Log.d(this.LOG_TAG, "showLoading: $show")
 
-        var visible = View.VISIBLE
-        if (!show) visible = View.GONE
-        pb_game_loading.visibility = visible
+        if (refresh) {
+            swp_refresh.isRefreshing = show
+        } else {
+            pb_game_loading.visibility = if (show) View.VISIBLE else View.GONE
+        }
     }
 
     override fun showGames(games: List<Game>) {
@@ -100,8 +107,8 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
     /**
      * Endless loading
      */
-    private fun onScrollListener(): RecyclerView.OnScrollListener {
-        return object : RecyclerView.OnScrollListener() {
+    private fun onScrollListener(): OnScrollListener {
+        return object : OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
@@ -116,14 +123,14 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
                 var scrollOutItems = 0
 
                 with(layoutManager) {
-                    currentGames = getChildCount()
-                    totalGames = getItemCount()
-                    scrollOutItems = findFirstVisibleItemPosition()
+                    currentGames = childCount
+                    totalGames = itemCount
+                    scrollOutItems = this.findFirstVisibleItemPosition()
                 }
 
                 if (isScrolling && currentGames + scrollOutItems == totalGames && dy > 0) {
                     isScrolling = false
-                    presenter.loadGames()
+                    presenter.loadGames(false)
                 }
             }
         }

@@ -24,11 +24,11 @@ class ListGamesPresenter(val twitchApi: TwitchAPI) : ListGamesContract.Presenter
 
     private val API_KEY = "0t4py0qo1iqagd5dnig9bheol9yo22"
 
-    override fun loadGames() {
+    override fun loadGames(refresh: Boolean) {
         val gameSize = games.size
 
         if (gameSize < limitOfGames) {
-            view.showLoading(true)
+            view.showLoading(true, refresh)
 
             val twitchCall: Call<TwitchData>
             val limit = if (limitToFetchGames + gameSize > limitOfGames) limitOfGames - gameSize else limitToFetchGames
@@ -45,13 +45,13 @@ class ListGamesPresenter(val twitchApi: TwitchAPI) : ListGamesContract.Presenter
                         games.add(Game(it.game.name, it.game.box, it.game.logo, it.channels, it.viewers))
                     }
 
+                    view.showLoading(false, refresh)
                     view.showGames(games)
-                    view.showLoading(false)
                 }
 
                 override fun onFailure(call: Call<TwitchData>, t: Throwable) {
                     t.printStackTrace()
-                    view.showLoading(false)
+                    view.showLoading(false, refresh)
                 }
             })
         }
@@ -59,6 +59,12 @@ class ListGamesPresenter(val twitchApi: TwitchAPI) : ListGamesContract.Presenter
 
     override fun setView(view: ListGamesContract.View) {
         this.view = view
+    }
+
+    override fun onRefresh() {
+        offset = null
+        games.clear()
+        loadGames(true)
     }
 
     override fun onClickGameDetail(game: Game) {

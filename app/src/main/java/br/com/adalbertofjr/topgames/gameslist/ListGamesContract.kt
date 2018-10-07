@@ -11,7 +11,7 @@ interface ListGamesContract {
 
     interface View {
 
-        fun showLoading(show: Boolean)
+        fun showLoading(show: Boolean, refresh: Boolean)
 
         fun showGames(games: List<Game>)
 
@@ -22,8 +22,10 @@ interface ListGamesContract {
 
         fun setView(view: View)
 
-        fun loadGames()
+        fun loadGames(refresh: Boolean)
 
         fun onClickGameDetail(game: Game)
+
+        fun onRefresh()
     }
 }
