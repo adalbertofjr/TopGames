@@ -6,5 +6,10 @@
 
     <!-- Description -->
     <string name="description_imagem_da_capa_do_jogo">Imagem da Capa do Jogo</string>
+    <string name="description_wifi_connection_error">Erro ao conectar Wifio</string>
+
+
+    <!-- Mensagens -->
+    <string name="wifi_connection_error">tentar novamente</string>
 
 </resources>

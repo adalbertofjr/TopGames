@@ -61,8 +61,9 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
         layoutManager = GridLayoutManager(this, 3)
         rv_game_list.layoutManager = layoutManager
         rv_game_list.adapter = adapter
-
         rv_game_list.addOnScrollListener(this.onScrollListener())
+
+        btn_tentar_novamente.setOnClickListener { presenter.onRefresh() }
 
         swp_refresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimary))
         swp_refresh.setOnRefreshListener { presenter.onRefresh() }
@@ -93,6 +94,10 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
     override fun showGameDetailUI(game: Game) {
         Log.d(LOG_TAG, "showGameDetailUI: ${game.name}")
         startDetailActivity(game)
+    }
+
+    override fun showErrorConnection(show: Boolean) {
+        rl_error.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     /**

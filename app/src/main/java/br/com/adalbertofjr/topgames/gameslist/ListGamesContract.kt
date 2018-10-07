@@ -1,5 +1,6 @@
 package br.com.adalbertofjr.topgames.gameslist
 
+import android.content.Context
 import br.com.adalbertofjr.topgames.data.api.model.Game
 
 /**
@@ -16,6 +17,8 @@ interface ListGamesContract {
         fun showGames(games: List<Game>)
 
         fun showGameDetailUI(game: Game)
+
+        fun showErrorConnection(show: Boolean)
     }
 
     interface Presenter {
@@ -27,5 +30,7 @@ interface ListGamesContract {
         fun onClickGameDetail(game: Game)
 
         fun onRefresh()
+
+        fun checkConnection(context: Context) : Boolean
     }
 }

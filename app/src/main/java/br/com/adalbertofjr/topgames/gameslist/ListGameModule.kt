@@ -16,7 +16,7 @@ class ListGameModule(val activity: ListGamesActivity) {
 
     @Provides
     fun provideListGamesPresenter(twitchApi: TwitchAPI): ListGamesPresenter {
-        return ListGamesPresenter(twitchApi)
+        return ListGamesPresenter(twitchApi, activity)
     }
 
     @Provides
