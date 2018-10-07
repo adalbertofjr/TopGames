@@ -13,13 +13,13 @@ interface ListGamesContract {
 
         fun showGames(games: List<ListGamesPresenter.Game>)
 
-        fun showGameDetailUI()
+        fun showGameDetailUI(game: ListGamesPresenter.Game)
     }
 
     interface Presenter {
 
         fun loadGames()
 
-        fun onClickGameDetail()
+        fun onClickGameDetail(game: ListGamesPresenter.Game)
     }
 }

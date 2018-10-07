@@ -1,5 +1,7 @@
 package br.com.adalbertofjr.topgames.gameslist
 
+import java.io.Serializable
+
 /**
  * ListGamesPresenter
  * Created by Adalberto Fernandes Júnior on 06/10/2018.
@@ -42,9 +44,9 @@ class ListGamesPresenter(val view: ListGamesContract.View) : ListGamesContract.P
         }
     }
 
-    override fun onClickGameDetail() {
-        this.view.let { it.showGameDetailUI() }
+    override fun onClickGameDetail(game: Game) {
+        this.view.let { it.showGameDetailUI(game) }
     }
 
-    data class Game(val name: String)
+    data class Game(val name: String) : Serializable
 }
