@@ -3,10 +3,12 @@ package br.com.adalbertofjr.topgames.gamedetail
 import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import br.com.adalbertofjr.topgames.R
 import br.com.adalbertofjr.topgames.data.api.model.Game
 import br.com.adalbertofjr.topgames.root.App
 import br.com.adalbertofjr.topgames.util.Constants
+import br.com.adalbertofjr.topgames.util.loadImageFrom
 import kotlinx.android.synthetic.main.activity_detail.*
 import javax.inject.Inject
 
@@ -50,6 +52,19 @@ class DetailGameActivity : AppCompatActivity(), DetailGameContract.View {
     }
 
     override fun showDetailGame(game: Game) {
+        imv_detail_poster_back.loadImageFrom(game.box.large)
+        imv_poster_detail.loadImageFrom(game.box.large)
         txv_title.text = game.name
+        txv_channel_visualiztions.text = "${game.channels} canais - ${game.viewers} visualizações"
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onContextItemSelected(item)
+        }
     }
 }

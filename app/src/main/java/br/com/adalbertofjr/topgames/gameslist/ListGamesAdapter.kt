@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import br.com.adalbertofjr.topgames.R
 import br.com.adalbertofjr.topgames.data.api.model.Game
+import br.com.adalbertofjr.topgames.util.loadImageFrom
 import kotlinx.android.synthetic.main.item_list_games.view.*
 
 class ListGamesAdapter(var games: List<Game>) : RecyclerView.Adapter<ListGamesAdapter.ViewHolder>() {
@@ -25,17 +26,17 @@ class ListGamesAdapter(var games: List<Game>) : RecyclerView.Adapter<ListGamesAd
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val game = games.get(position)
+        val game = games.get(position)
 
-            holder.card.txv_title.text = game.name
+        holder.card.txv_item_title.text = game.name
+        holder.card.imv_poster.loadImageFrom(url = game.box.large)
 
-            holder.card.setOnClickListener { _ ->
-                Log.i(LOG_TAG, game.name)
-
-                if (listener != null) {
-                    listener.onGameClickListener(game)
-                }
+        holder.card.setOnClickListener { _ ->
+            Log.i(LOG_TAG, game.name)
+            if (listener != null) {
+                listener.onGameClickListener(game)
             }
+        }
     }
 
     fun setListerGameCallback(listener: ListGameAdapterCallback) {

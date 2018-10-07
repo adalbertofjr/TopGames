@@ -31,7 +31,7 @@ class ListGamesPresenter(val twitchApi: TwitchAPI) : ListGamesContract.Presenter
 
                 for (game in topGames) {
                     Log.i("Jogo: ", game.toString())
-                    games.add(Game(game.game.name, game.game.box, game.game.logo))
+                    games.add(Game(game.game.name, game.game.box, game.game.logo, game.channels, game.viewers))
                 }
 
                 view.showGames(games)

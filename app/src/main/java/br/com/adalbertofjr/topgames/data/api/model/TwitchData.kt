@@ -14,17 +14,21 @@ data class TwitchData(@SerializedName("_total") val total: Int, val top: List<To
 
 data class Top(val channels: Int, val viewers: Int, val game: Game)
 
-data class Game(val name: String, val box: Box, val logo: Logo) : Parcelable {
+data class Game(val name: String, val box: Box, val logo: Logo, val channels: Int, val viewers: Int) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readParcelable(Box::class.java.classLoader),
-            parcel.readParcelable(Logo::class.java.classLoader)) {
+            parcel.readParcelable(Logo::class.java.classLoader),
+            parcel.readInt(),
+            parcel.readInt()) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeParcelable(box, flags)
         parcel.writeParcelable(logo, flags)
+        parcel.writeInt(channels)
+        parcel.writeInt(viewers)
     }
 
     override fun describeContents(): Int {
@@ -42,12 +46,12 @@ data class Game(val name: String, val box: Box, val logo: Logo) : Parcelable {
     }
 }
 
-data class Box(val medium: String) : Parcelable {
+data class Box(val large: String) : Parcelable {
     constructor(parcel: Parcel) : this(parcel.readString()) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(medium)
+        parcel.writeString(large)
     }
 
     override fun describeContents(): Int {
@@ -65,12 +69,12 @@ data class Box(val medium: String) : Parcelable {
     }
 }
 
-data class Logo(val template: String) : Parcelable {
+data class Logo(val large: String) : Parcelable {
     constructor(parcel: Parcel) : this(parcel.readString()) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(template)
+        parcel.writeString(large)
     }
 
     override fun describeContents(): Int {
