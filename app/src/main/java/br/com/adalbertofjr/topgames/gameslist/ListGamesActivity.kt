@@ -21,39 +21,42 @@ import javax.inject.Inject
  * Copyright © 2018. All rights reserved.
  */
 class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGamesAdapter.ListGameAdapterCallback {
+
     val LOG_TAG = ListGamesActivity::class.java.simpleName
-
-    private var gamesList = ArrayList<Game>()
-    private var adapter: ListGamesAdapter? = null
-
     val Activity.app: App
         get() = application as App
-
     val component by lazy { app.component.inject(ListGameModule(this)) }
 
     @Inject
     lateinit var presenter: ListGamesPresenter
+
+    @Inject
+    lateinit var adapter: ListGamesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_list_games)
 
+        //Injection
         component.inject(this)
 
         //Presenter
-        presenter.view = this
+        presenter.setView(this)
 
+        //Callback
+        adapter.setListerGameCallback(this)
+
+
+        //Widgets
         toolbar.setTitle(getString(R.string.app_name))
         toolbar.setTitleTextColor(Color.WHITE)
-
-        gamesList = ArrayList()
-        adapter = ListGamesAdapter(gamesList, this)
 
         rv_game_list.setHasFixedSize(true)
         rv_game_list.layoutManager = GridLayoutManager(this, 3)
         rv_game_list.adapter = adapter
 
+        //Carregar Games
         presenter.loadGames()
     }
 
@@ -68,16 +71,21 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
     override fun showGames(games: List<Game>) {
         Log.d(LOG_TAG, "showGames")
 
-        gamesList.addAll(games)
-        adapter?.let { it.notifyDataSetChanged() }
+        adapter.updateData(games)
     }
 
     override fun showGameDetailUI(game: Game) {
         Log.d(LOG_TAG, "showGameDetailUI: ${game.name}")
 
+        startDetailActivity(game)
+    }
+
+    /**
+     * Iniciar DetailGameActivity
+     */
+    private fun startDetailActivity(game: Game) {
         val intent = Intent(this, DetailGameActivity::class.java)
         intent.putExtra(DETAIL_EXTRA, game)
-
         startActivity(intent)
     }
 }

@@ -20,6 +20,8 @@ interface ListGamesContract {
 
     interface Presenter {
 
+        fun setView(view: View)
+
         fun loadGames()
 
         fun onClickGameDetail(game: Game)

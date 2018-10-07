@@ -30,29 +30,26 @@ class DetailGameActivity : AppCompatActivity(), DetailGameContract.View {
 
         setContentView(R.layout.activity_detail)
 
-        // Inject
+        //Inject
         component.inject(this)
 
+        //View
+        presenter.setView(this)
+
+        //Widgets
         setSupportActionBar(tb_detail)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = ""
-
-        // View
-        presenter.view = this
     }
 
     override fun onResume() {
         super.onResume()
 
         val game = this.intent.getParcelableExtra(Constants.DETAIL_EXTRA) as Game
-        if (game != null) {
-            this.presenter?.loadDataGame(game)
-        }
+        this.presenter.loadDataGame(game)
     }
 
     override fun showDetailGame(game: Game) {
-        if (game != null) {
-            txv_title.text = game.name
-        }
+        txv_title.text = game.name
     }
 }

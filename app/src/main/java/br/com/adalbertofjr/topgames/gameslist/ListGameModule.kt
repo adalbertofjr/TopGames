@@ -1,6 +1,7 @@
 package br.com.adalbertofjr.topgames.gameslist
 
 import br.com.adalbertofjr.topgames.data.api.TwitchAPI
+import br.com.adalbertofjr.topgames.data.api.model.Game
 import dagger.Module
 import dagger.Provides
 
@@ -14,7 +15,17 @@ import dagger.Provides
 class ListGameModule(val activity: ListGamesActivity) {
 
     @Provides
-    fun provideListGamesPresenter(twitchApi : TwitchAPI): ListGamesPresenter {
+    fun provideListGamesPresenter(twitchApi: TwitchAPI): ListGamesPresenter {
         return ListGamesPresenter(twitchApi)
+    }
+
+    @Provides
+    fun providesListGamesAdapter(): ListGamesAdapter {
+        return ListGamesAdapter(providesGameList())
+    }
+
+    @Provides
+    fun providesGameList() : ArrayList<Game>{
+        return ArrayList<Game>()
     }
 }

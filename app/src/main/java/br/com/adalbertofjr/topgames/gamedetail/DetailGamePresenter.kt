@@ -9,11 +9,13 @@ import br.com.adalbertofjr.topgames.data.api.model.Game
  */
 class DetailGamePresenter : DetailGameContract.Presenter {
 
-    var view: DetailGameContract.View? = null
+    private lateinit var view: DetailGameContract.View
 
     override fun loadDataGame(game: Game) {
-        view?.let {
-            it.showDetailGame(game)
-        }
+        view.showDetailGame(game)
+    }
+
+    fun setView(view: DetailGameContract.View) {
+        this.view = view
     }
 }

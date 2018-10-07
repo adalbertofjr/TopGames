@@ -15,11 +15,13 @@ import retrofit2.Response
  */
 class ListGamesPresenter(val twitchApi: TwitchAPI) : ListGamesContract.Presenter {
 
-    var view: ListGamesContract.View? = null
+
+    private lateinit var view: ListGamesContract.View
 
     override fun loadGames() {
-        val twitchCall = twitchApi.getTopGames("0t4py0qo1iqagd5dnig9bheol9yo22")
+        view.showLoading(true)
 
+        val twitchCall = twitchApi.getTopGames("0t4py0qo1iqagd5dnig9bheol9yo22")
         twitchCall.enqueue(object : Callback<TwitchData> {
             override fun onResponse(call: Call<TwitchData>, response: Response<TwitchData>) {
                 val topGames = response.body()!!.top
@@ -32,22 +34,22 @@ class ListGamesPresenter(val twitchApi: TwitchAPI) : ListGamesContract.Presenter
                     games.add(Game(game.game.name, game.game.box, game.game.logo))
                 }
 
-                view?.let {
-                    it.showLoading(true)
-                    it.showGames(games)
-                    it.showLoading(false)
-                }
+                view.showGames(games)
+                view.showLoading(false)
             }
 
             override fun onFailure(call: Call<TwitchData>, t: Throwable) {
                 t.printStackTrace()
+                view.showLoading(false)
             }
         })
+    }
 
-
+    override fun setView(view: ListGamesContract.View) {
+        this.view = view
     }
 
     override fun onClickGameDetail(game: Game) {
-        view?.let { it.showGameDetailUI(game) }
+        view.showGameDetailUI(game)
     }
 }
