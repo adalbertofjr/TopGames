@@ -1,6 +1,6 @@
 package br.com.adalbertofjr.topgames.gamedetail
 
-import br.com.adalbertofjr.topgames.gameslist.ListGamesPresenter
+import br.com.adalbertofjr.topgames.data.api.model.Game
 
 /**
  * DetailGamePresenter
@@ -9,7 +9,7 @@ import br.com.adalbertofjr.topgames.gameslist.ListGamesPresenter
  */
 class DetailGamePresenter(val view: DetailGameContract.View) : DetailGameContract.Presenter {
 
-    override fun loadDataGame(game: ListGamesPresenter.Game) {
+    override fun loadDataGame(game: Game) {
         if (this.view != null) {
             this.view.showDetailGame(game)
         }

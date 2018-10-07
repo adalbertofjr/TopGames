@@ -1,52 +1,53 @@
 package br.com.adalbertofjr.topgames.gameslist
 
-import java.io.Serializable
+import android.util.Log
+import br.com.adalbertofjr.topgames.data.api.TwitchAPI
+import br.com.adalbertofjr.topgames.data.api.model.Game
+import br.com.adalbertofjr.topgames.data.api.model.TwitchData
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 /**
  * ListGamesPresenter
  * Created by Adalberto Fernandes Júnior on 06/10/2018.
  * Copyright © 2018. All rights reserved.
  */
-class ListGamesPresenter(val view: ListGamesContract.View) : ListGamesContract.Presenter {
+class ListGamesPresenter(val twitchApi: TwitchAPI) : ListGamesContract.Presenter {
 
+    var view: ListGamesContract.View? = null
 
     override fun loadGames() {
+        val twitchCall = twitchApi.getTopGames("0t4py0qo1iqagd5dnig9bheol9yo22")
 
-        val games = listOf<Game>(
-                Game("Counter Strike"),
-                Game("Assassins Creed Odyssey"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("South Park : Stick of Truth"),
-                Game("Street Of Rage 4")
-        )
+        twitchCall.enqueue(object : Callback<TwitchData> {
+            override fun onResponse(call: Call<TwitchData>, response: Response<TwitchData>) {
+                val topGames = response.body()!!.top
 
-        if (this.view != null) {
-            this.view.showLoading(true)
-            this.view.showGames(games)
-            this.view.showLoading(false)
-        }
+
+                val games = mutableListOf<Game>()
+
+                for (game in topGames) {
+                    Log.i("Jogo: ", game.toString())
+                    games.add(Game(game.game.name, game.game.box, game.game.logo))
+                }
+
+                view?.let {
+                    it.showLoading(true)
+                    it.showGames(games)
+                    it.showLoading(false)
+                }
+            }
+
+            override fun onFailure(call: Call<TwitchData>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+
+
     }
 
     override fun onClickGameDetail(game: Game) {
-        this.view.let { it.showGameDetailUI(game) }
+        view?.let { it.showGameDetailUI(game) }
     }
-
-    data class Game(val name: String) : Serializable
 }

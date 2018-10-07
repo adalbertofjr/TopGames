@@ -3,7 +3,7 @@ package br.com.adalbertofjr.topgames.gamedetail
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import br.com.adalbertofjr.topgames.R
-import br.com.adalbertofjr.topgames.gameslist.ListGamesPresenter
+import br.com.adalbertofjr.topgames.data.api.model.Game
 import br.com.adalbertofjr.topgames.util.Constants
 import kotlinx.android.synthetic.main.activity_detail.*
 
@@ -31,13 +31,13 @@ class DetailGameActivity : AppCompatActivity(), DetailGameContract.View {
     override fun onResume() {
         super.onResume()
 
-        val game = this.intent.getSerializableExtra(Constants.DETAIL_EXTRA) as ListGamesPresenter.Game
+        val game = this.intent.getParcelableExtra(Constants.DETAIL_EXTRA) as Game
         if (game != null) {
             this.presenter?.loadDataGame(game)
         }
     }
 
-    override fun showDetailGame(game: ListGamesPresenter.Game) {
+    override fun showDetailGame(game: Game) {
         if (game != null) {
             txv_title.text = game.name
         }

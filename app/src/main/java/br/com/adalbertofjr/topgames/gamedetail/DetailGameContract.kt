@@ -1,6 +1,6 @@
 package br.com.adalbertofjr.topgames.gamedetail
 
-import br.com.adalbertofjr.topgames.gameslist.ListGamesPresenter
+import br.com.adalbertofjr.topgames.data.api.model.Game
 
 /**
  * DetailGameContract
@@ -10,10 +10,10 @@ import br.com.adalbertofjr.topgames.gameslist.ListGamesPresenter
 interface DetailGameContract {
 
     interface View {
-        fun showDetailGame(game: ListGamesPresenter.Game)
+        fun showDetailGame(game: Game)
     }
 
     interface Presenter {
-        fun loadDataGame(game: ListGamesPresenter.Game)
+        fun loadDataGame(game: Game)
     }
 }

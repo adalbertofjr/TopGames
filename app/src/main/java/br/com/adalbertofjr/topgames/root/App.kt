@@ -1,6 +1,7 @@
 package br.com.adalbertofjr.topgames.root
 
 import android.app.Application
+import br.com.adalbertofjr.topgames.data.api.TwitchApiModule
 
 /**
  * App
@@ -13,6 +14,7 @@ class App : Application() {
         DaggerApplicationComponent
                 .builder()
                 .applicationModule(ApplicationModule(this))
+                .twitchApiModule(TwitchApiModule(this))
                 .build()
     }
 

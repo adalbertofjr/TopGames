@@ -1,7 +1,8 @@
 package br.com.adalbertofjr.topgames.root
 
-import br.com.adalbertofjr.topgames.data.api.TwitchApiComponent
 import br.com.adalbertofjr.topgames.data.api.TwitchApiModule
+import br.com.adalbertofjr.topgames.gameslist.ListGameComponent
+import br.com.adalbertofjr.topgames.gameslist.ListGameModule
 import dagger.Component
 import javax.inject.Singleton
 
@@ -11,8 +12,8 @@ import javax.inject.Singleton
  * Copyright © 2018. All rights reserved.
  */
 @Singleton
-@Component(modules = arrayOf(ApplicationModule::class))
+@Component(modules = arrayOf(ApplicationModule::class, TwitchApiModule::class))
 interface ApplicationComponent {
     fun inject(target: App)
-    fun inject(target: TwitchApiModule): TwitchApiComponent
+    fun inject(target: ListGameModule): ListGameComponent
 }

@@ -1,5 +1,7 @@
 package br.com.adalbertofjr.topgames.gameslist
 
+import br.com.adalbertofjr.topgames.data.api.model.Game
+
 /**
  * ListGamesContract
  * Created by Adalberto Fernandes Júnior on 06/10/2018.
@@ -11,15 +13,15 @@ interface ListGamesContract {
 
         fun showLoading(show: Boolean)
 
-        fun showGames(games: List<ListGamesPresenter.Game>)
+        fun showGames(games: List<Game>)
 
-        fun showGameDetailUI(game: ListGamesPresenter.Game)
+        fun showGameDetailUI(game: Game)
     }
 
     interface Presenter {
 
         fun loadGames()
 
-        fun onClickGameDetail(game: ListGamesPresenter.Game)
+        fun onClickGameDetail(game: Game)
     }
 }

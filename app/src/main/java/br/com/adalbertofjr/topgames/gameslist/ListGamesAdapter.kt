@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import br.com.adalbertofjr.topgames.R
+import br.com.adalbertofjr.topgames.data.api.model.Game
 import kotlinx.android.synthetic.main.item_list_games.view.*
 
-class ListGamesAdapter(val games: ArrayList<ListGamesPresenter.Game>, val listener: ListGameAdapterCallback) : RecyclerView.Adapter<ListGamesAdapter.ViewHolder>() {
+class ListGamesAdapter(val games: List<Game>, val listener: ListGameAdapterCallback) : RecyclerView.Adapter<ListGamesAdapter.ViewHolder>() {
     private val LOG_TAG = ListGamesAdapter::class.java.simpleName
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -40,6 +41,6 @@ class ListGamesAdapter(val games: ArrayList<ListGamesPresenter.Game>, val listen
     class ViewHolder(val card: View) : RecyclerView.ViewHolder(card)
 
     public interface ListGameAdapterCallback {
-        fun onGameClickListener(game: ListGamesPresenter.Game)
+        fun onGameClickListener(game: Game)
     }
 }

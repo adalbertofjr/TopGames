@@ -1,6 +1,6 @@
 package br.com.adalbertofjr.topgames.data.api
 
-import br.com.adalbertofjr.topgames.gameslist.ListGamesActivity
+import br.com.adalbertofjr.topgames.root.App
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Copyright © 2018. All rights reserved.
  */
 @Module
-class TwitchApiModule(val activity: ListGamesActivity){
+class TwitchApiModule(val application: App){
 
     val BASE_URL = "https://api.twitch.tv/kraken/"
 
