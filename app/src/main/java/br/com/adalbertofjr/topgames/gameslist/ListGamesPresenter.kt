@@ -21,14 +21,14 @@ class ListGamesPresenter(val twitchApi: TwitchAPI) : ListGamesContract.Presenter
     override fun loadGames() {
         view.showLoading(true)
 
-        val twitchCall = twitchApi.getTopGames("0t4py0qo1iqagd5dnig9bheol9yo22")
+        val twitchCall = twitchApi.getTopGames("0t4py0qo1iqagd5dnig9bheol9yo22", 12)
         twitchCall.enqueue(object : Callback<TwitchData> {
             override fun onResponse(call: Call<TwitchData>, response: Response<TwitchData>) {
+                val links = response.body()!!.links
+
                 val topGames = response.body()!!.top
 
-
                 val games = mutableListOf<Game>()
-
                 for (game in topGames) {
                     Log.i("Jogo: ", game.toString())
                     games.add(Game(game.game.name, game.game.box, game.game.logo, game.channels, game.viewers))

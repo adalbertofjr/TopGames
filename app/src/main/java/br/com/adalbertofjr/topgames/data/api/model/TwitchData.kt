@@ -10,9 +10,12 @@ import com.google.gson.annotations.SerializedName
  * Copyright © 2018. All rights reserved.
  */
 
-data class TwitchData(@SerializedName("_total") val total: Int, val top: List<Top>)
+data class TwitchData(@SerializedName("_total") val total: Int, val top: List<Top>, @SerializedName("_links") val links: Links)
+
 
 data class Top(val channels: Int, val viewers: Int, val game: Game)
+
+data class Links(val self: String, val next: String)
 
 data class Game(val name: String, val box: Box, val logo: Logo, val channels: Int, val viewers: Int) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -20,8 +23,7 @@ data class Game(val name: String, val box: Box, val logo: Logo, val channels: In
             parcel.readParcelable(Box::class.java.classLoader),
             parcel.readParcelable(Logo::class.java.classLoader),
             parcel.readInt(),
-            parcel.readInt()) {
-    }
+            parcel.readInt())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
@@ -47,8 +49,7 @@ data class Game(val name: String, val box: Box, val logo: Logo, val channels: In
 }
 
 data class Box(val large: String) : Parcelable {
-    constructor(parcel: Parcel) : this(parcel.readString()) {
-    }
+    constructor(parcel: Parcel) : this(parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(large)
@@ -70,8 +71,7 @@ data class Box(val large: String) : Parcelable {
 }
 
 data class Logo(val large: String) : Parcelable {
-    constructor(parcel: Parcel) : this(parcel.readString()) {
-    }
+    constructor(parcel: Parcel) : this(parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(large)

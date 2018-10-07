@@ -4,6 +4,7 @@ import br.com.adalbertofjr.topgames.data.api.model.TwitchData
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Query
 
 /**
  * TwitchAPI
@@ -15,5 +16,5 @@ import retrofit2.http.Header
 interface TwitchAPI {
 
     @GET("games/top")
-    abstract fun getTopGames(@Header("Client-ID") clientID: String): Call<TwitchData>
+    fun getTopGames(@Header("Client-ID") clientID: String, @Query("limit") limit: Int): Call<TwitchData>
 }
