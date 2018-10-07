@@ -1,5 +1,6 @@
 package br.com.adalbertofjr.topgames.gameslist
 
+import android.net.Uri
 import android.util.Log
 import br.com.adalbertofjr.topgames.data.api.TwitchAPI
 import br.com.adalbertofjr.topgames.data.api.model.Game
@@ -14,35 +15,46 @@ import retrofit2.Response
  * Copyright © 2018. All rights reserved.
  */
 class ListGamesPresenter(val twitchApi: TwitchAPI) : ListGamesContract.Presenter {
-
-
+    private val games = mutableListOf<Game>()
     private lateinit var view: ListGamesContract.View
 
+    private val limitOfGames = 100
+    private val limitToFetchGames = 13
+    private var offset: Int? = null
+
+    private val API_KEY = "0t4py0qo1iqagd5dnig9bheol9yo22"
+
     override fun loadGames() {
-        view.showLoading(true)
+        val gameSize = games.size
 
-        val twitchCall = twitchApi.getTopGames("0t4py0qo1iqagd5dnig9bheol9yo22", 12)
-        twitchCall.enqueue(object : Callback<TwitchData> {
-            override fun onResponse(call: Call<TwitchData>, response: Response<TwitchData>) {
-                val links = response.body()!!.links
+        if (gameSize < limitOfGames) {
+            view.showLoading(true)
 
-                val topGames = response.body()!!.top
+            val twitchCall: Call<TwitchData>
+            val limit = if (limitToFetchGames + gameSize > limitOfGames) limitOfGames - gameSize else limitToFetchGames
 
-                val games = mutableListOf<Game>()
-                for (game in topGames) {
-                    Log.i("Jogo: ", game.toString())
-                    games.add(Game(game.game.name, game.game.box, game.game.logo, game.channels, game.viewers))
+            twitchCall = twitchApi.getTopGames(API_KEY, limit, offset)
+            twitchCall.enqueue(object : Callback<TwitchData> {
+                override fun onResponse(call: Call<TwitchData>, response: Response<TwitchData>) {
+                    val links = response.body()!!.links
+                    val topGames = response.body()!!.top
+                    offset = Uri.parse(links.next).getQueryParameter("offset").toInt()
+
+                    topGames.forEach {
+                        Log.i("Jogo: ", it.game.toString())
+                        games.add(Game(it.game.name, it.game.box, it.game.logo, it.channels, it.viewers))
+                    }
+
+                    view.showGames(games)
+                    view.showLoading(false)
                 }
 
-                view.showGames(games)
-                view.showLoading(false)
-            }
-
-            override fun onFailure(call: Call<TwitchData>, t: Throwable) {
-                t.printStackTrace()
-                view.showLoading(false)
-            }
-        })
+                override fun onFailure(call: Call<TwitchData>, t: Throwable) {
+                    t.printStackTrace()
+                    view.showLoading(false)
+                }
+            })
+        }
     }
 
     override fun setView(view: ListGamesContract.View) {

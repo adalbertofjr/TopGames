@@ -16,5 +16,8 @@ import retrofit2.http.Query
 interface TwitchAPI {
 
     @GET("games/top")
-    fun getTopGames(@Header("Client-ID") clientID: String, @Query("limit") limit: Int): Call<TwitchData>
+    fun getTopGames(
+            @Header("Client-ID") clientID: String,
+            @Query("limit") limit: Int,
+            @Query("offset") offset: Int?): Call<TwitchData>
 }

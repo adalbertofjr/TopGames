@@ -24,21 +24,17 @@ import javax.inject.Inject
  * Copyright © 2018. All rights reserved.
  */
 class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGamesAdapter.ListGameAdapterCallback {
-
-    val LOG_TAG = ListGamesActivity::class.java.simpleName
-    val Activity.app: App
-        get() = application as App
-    val component by lazy { app.component.inject(ListGameModule(this)) }
+    private val LOG_TAG = ListGamesActivity::class.java.simpleName
+    private val Activity.app: App get() = application as App
+    private val component by lazy { app.component.inject(ListGameModule(this)) }
+    private lateinit var layoutManager: GridLayoutManager
+    private var isScrolling = false
 
     @Inject
     lateinit var presenter: ListGamesPresenter
 
     @Inject
     lateinit var adapter: ListGamesAdapter
-
-    private lateinit var layoutManager: GridLayoutManager
-
-    private var isScrolling = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,13 +80,11 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
 
     override fun showGames(games: List<Game>) {
         Log.d(LOG_TAG, "showGames")
-
         adapter.updateData(games)
     }
 
     override fun showGameDetailUI(game: Game) {
         Log.d(LOG_TAG, "showGameDetailUI: ${game.name}")
-
         startDetailActivity(game)
     }
 
@@ -108,7 +102,6 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
      */
     private fun onScrollListener(): RecyclerView.OnScrollListener {
         return object : RecyclerView.OnScrollListener() {
-
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
@@ -118,7 +111,6 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
 
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
                 var currentGames = 0
                 var totalGames = 0
                 var scrollOutItems = 0
