@@ -7,11 +7,13 @@ import br.com.adalbertofjr.topgames.data.api.model.Game
  * Created by Adalberto Fernandes Júnior on 06/10/2018.
  * Copyright © 2018. All rights reserved.
  */
-class DetailGamePresenter(val view: DetailGameContract.View) : DetailGameContract.Presenter {
+class DetailGamePresenter : DetailGameContract.Presenter {
+
+    var view: DetailGameContract.View? = null
 
     override fun loadDataGame(game: Game) {
-        if (this.view != null) {
-            this.view.showDetailGame(game)
+        view?.let {
+            it.showDetailGame(game)
         }
     }
 }
