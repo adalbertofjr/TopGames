@@ -26,6 +26,14 @@
         <activity
             android:name=".gamedetail.DetailGameActivity"
             android:screenOrientation="portrait" />
+
+        <!-- Registrando Content Provider -->
+        <provider
+            android:name=".data.local.TopGamesProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"
+            android:syncable="true" />
+
     </application>
 
 </manifest>

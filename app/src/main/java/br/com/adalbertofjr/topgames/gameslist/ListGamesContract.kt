@@ -19,6 +19,8 @@ interface ListGamesContract {
         fun showGameDetailUI(game: Game)
 
         fun showErrorConnection(show: Boolean)
+
+        fun showSnackBar(msg : String)
     }
 
     interface Presenter {

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
@@ -26,6 +27,8 @@ import javax.inject.Inject
  * Copyright © 2018. All rights reserved.
  */
 class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGamesAdapter.ListGameAdapterCallback {
+
+
     private val LOG_TAG = ListGamesActivity::class.java.simpleName
     private val Activity.app: App get() = application as App
     private val component by lazy { app.component.inject(ListGameModule(this)) }
@@ -98,6 +101,11 @@ class ListGamesActivity : AppCompatActivity(), ListGamesContract.View, ListGames
 
     override fun showErrorConnection(show: Boolean) {
         rl_error.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
+    override fun showSnackBar(msg: String) {
+        Log.d(LOG_TAG, "showSnackBar: $msg")
+        Snackbar.make(main_layout, msg, Snackbar.LENGTH_LONG).show()
     }
 
     /**

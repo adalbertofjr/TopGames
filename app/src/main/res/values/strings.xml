@@ -12,4 +12,7 @@
     <!-- Mensagens -->
     <string name="wifi_connection_error">tentar novamente</string>
 
+    <!-- Content Provider -->
+    <string name="content_authority" translatable="false">br.com.adalbertofjr.topgames</string>
+
 </resources>
