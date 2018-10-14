@@ -24,7 +24,7 @@ class TopGamesDbHelper(context: Context) : SQLiteOpenHelper(context, name, null,
         val SQL_CREATE_TOP_GAMES_TABLE = "CREATE TABLE " +
                 TABLE_NAME + " (" +
                 _ID + " INTEGER PRIMARY KEY, " +
-                COLUMN_NAME + " TEXT UNIQUE NOT NULL, " +
+                COLUMN_NAME + " TEXT NOT NULL, " +
                 COLUMN_BOX + " TEXT NOT NULL, " +
                 COLUMN_LOGO + " TEXT NOT NULL, " +
                 COLUMN_CHANNELS + " INTEGER NOT NULL, " +

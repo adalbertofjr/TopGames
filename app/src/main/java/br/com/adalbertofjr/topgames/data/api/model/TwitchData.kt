@@ -12,7 +12,6 @@ import com.google.gson.annotations.SerializedName
 
 data class TwitchData(@SerializedName("_total") val total: Int, val top: List<Top>, @SerializedName("_links") val links: Links)
 
-
 data class Top(val channels: Int, val viewers: Int, val game: Game)
 
 data class Links(val self: String, val next: String)

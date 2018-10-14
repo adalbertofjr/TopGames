@@ -1,24 +1,13 @@
 package br.com.adalbertofjr.topgames.gameslist
 
-import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import br.com.adalbertofjr.topgames.data.api.TwitchAPI
-import br.com.adalbertofjr.topgames.data.api.model.Box
 import br.com.adalbertofjr.topgames.data.api.model.Game
-import br.com.adalbertofjr.topgames.data.api.model.Logo
-import br.com.adalbertofjr.topgames.data.api.model.TwitchData
-import br.com.adalbertofjr.topgames.data.local.TopGamesContract
-import br.com.adalbertofjr.topgames.data.local.TopGamesContract.TopGamesEntry.Companion.COLUMN_BOX
-import br.com.adalbertofjr.topgames.data.local.TopGamesContract.TopGamesEntry.Companion.COLUMN_CHANNELS
-import br.com.adalbertofjr.topgames.data.local.TopGamesContract.TopGamesEntry.Companion.COLUMN_LOGO
-import br.com.adalbertofjr.topgames.data.local.TopGamesContract.TopGamesEntry.Companion.COLUMN_NAME
-import br.com.adalbertofjr.topgames.data.local.TopGamesContract.TopGamesEntry.Companion.COLUMN_VIEWERS
+import br.com.adalbertofjr.topgames.data.repository.RepositoryResponseListerner
+import br.com.adalbertofjr.topgames.data.repository.TopMoviesRepository
+import br.com.adalbertofjr.topgames.gameslist.domain.model.TopGames
 import br.com.adalbertofjr.topgames.util.isConnected
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 /**
  * ListGamesPresenter
@@ -34,8 +23,6 @@ class ListGamesPresenter(val twitchApi: TwitchAPI, val activity: ListGamesActivi
     private val limitToFetchGames = 13
     private var offset: Int? = null
     private var inCache: Boolean = false
-
-    private val API_KEY = "0t4py0qo1iqagd5dnig9bheol9yo22"
 
     override fun loadGames(refresh: Boolean) {
         // Connection
@@ -64,9 +51,7 @@ class ListGamesPresenter(val twitchApi: TwitchAPI, val activity: ListGamesActivi
         offset = null
         games.clear()
 
-        if (checkConnection(activity)) {
-            activity.contentResolver.delete(TopGamesContract.TopGamesEntry.CONTENT_URI, null, null)
-        }
+        limparCache()
 
         loadGames(true)
     }
@@ -84,32 +69,33 @@ class ListGamesPresenter(val twitchApi: TwitchAPI, val activity: ListGamesActivi
             inCache = false
         }
 
-        val twitchCall: Call<TwitchData>
-        val limit = if (limitToFetchGames + gameSize > limitOfGames) limitOfGames - gameSize else limitToFetchGames
+        val limit =
+                if (limitToFetchGames + gameSize > limitOfGames)
+                    limitOfGames - gameSize else limitToFetchGames
 
-        twitchCall = twitchApi.getTopGames(API_KEY, limit, offset)
-        twitchCall.enqueue(object : Callback<TwitchData> {
-            override fun onResponse(call: Call<TwitchData>, response: Response<TwitchData>) {
-                val links = response.body()!!.links
-                val topGames = response.body()!!.top
-                offset = Uri.parse(links.next).getQueryParameter("offset").toInt()
+        TopMoviesRepository().getMoviesFromNetwork(
+                twitchApi,
+                limit,
+                offset,
+                object : RepositoryResponseListerner<TopGames> {
+                    override fun onSuccess(topGames: TopGames) {
+                        view.showLoading(false, refresh)
+                        val links = topGames.links
+                        offset = Uri.parse(links.next).getQueryParameter("offset").toInt()
 
-                topGames.forEach {
-                    Log.i("Jogo: ", it.game.toString())
-                    val game = Game(it.game.name, it.game.box, it.game.logo, it.channels, it.viewers)
-                    games.add(game)
-                    insertLocalDatabase(game)
-                }
+                        topGames.games.forEach {
+                            games.add(it)
+                        }
 
-                view.showLoading(false, refresh)
-                view.showGames(games)
-            }
+                        TopMoviesRepository().insertMoviesInCache(topGames.games, activity)
 
-            override fun onFailure(call: Call<TwitchData>, t: Throwable) {
-                t.printStackTrace()
-                view.showLoading(false, refresh)
-            }
-        })
+                        view.showGames(games)
+                    }
+
+                    override fun onFailure(message: String) {
+                        view.showLoading(false, refresh)
+                    }
+                })
     }
 
 
@@ -119,49 +105,31 @@ class ListGamesPresenter(val twitchApi: TwitchAPI, val activity: ListGamesActivi
     private fun fetchGamesInCache(refresh: Boolean) {
         if (games.size <= 0) {
             inCache = true
-            val cursor = activity.getContentResolver().query(
-                    TopGamesContract.TopGamesEntry.CONTENT_URI,
-                    null,
-                    null,
-                    null,
-                    null
+
+            TopMoviesRepository().getMoviesFromCache(
+                    activity,
+                    object : RepositoryResponseListerner<TopGames> {
+                        override fun onSuccess(topGames: TopGames) {
+                            topGames.games.forEach {
+                                games.add(it)
+                            }
+
+                            view.showGames(games)
+                            view.showLoading(false, refresh)
+                        }
+
+                        override fun onFailure(message: String) {
+                            view.showLoading(false, refresh)
+                            view.showErrorConnection(true)
+                        }
+                    }
             )
-
-            while (cursor.moveToNext()) {
-                val name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME))
-                val box = cursor.getString(cursor.getColumnIndex(COLUMN_BOX))
-                val logo = cursor.getString(cursor.getColumnIndex(COLUMN_LOGO))
-                val channels = cursor.getInt(cursor.getColumnIndex(COLUMN_CHANNELS))
-                val viewers = cursor.getInt(cursor.getColumnIndex(COLUMN_VIEWERS))
-                val game = Game(name, Box(box), Logo(logo), channels, viewers)
-                games.add(game)
-            }
-
-            if (games.size > 0) {
-                view.showGames(games)
-            }else{
-                view.showErrorConnection(true)
-            }
         }
-        view.showLoading(false, refresh)
     }
 
-    /**
-     * Inserindo jogo no bd.
-     */
-    private fun insertLocalDatabase(game: Game) {
-        try {
-            val gameValue = ContentValues()
-            gameValue.put(COLUMN_NAME, game.name)
-            gameValue.put(COLUMN_BOX, game.box.large)
-            gameValue.put(COLUMN_LOGO, game.box.large)
-            gameValue.put(COLUMN_CHANNELS, game.channels)
-            gameValue.put(COLUMN_VIEWERS, game.viewers)
-
-            activity.contentResolver.insert(TopGamesContract.TopGamesEntry.CONTENT_URI, gameValue)
-            Log.i("Inserted", game.name)
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun limparCache() {
+        if (checkConnection(activity)) {
+            TopMoviesRepository().deleteMoviesFromCache(activity)
         }
     }
 }

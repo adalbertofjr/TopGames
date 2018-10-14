@@ -76,10 +76,11 @@ class TopGamesProvider : ContentProvider() {
         when (match) {
             TOP_GAMES -> {
                 val _id = db?.insert(TABLE_NAME, null, values)
+                val value = values!!.get("name")
                 if (_id != null && _id > 0)
                     returnUri = TopGamesContract.TopGamesEntry.buildPTopGamesUri(_id.toLong())
                 else
-                    throw android.database.SQLException("Failed to insert row into $uri")
+                    throw android.database.SQLException("Failed to insert row into $uri/$value")
             }
             else -> throw UnsupportedOperationException("Unknown uri: $uri")
         }
