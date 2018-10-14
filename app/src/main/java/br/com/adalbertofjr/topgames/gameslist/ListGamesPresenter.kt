@@ -1,13 +1,14 @@
 package br.com.adalbertofjr.topgames.gameslist
 
-import android.content.Context
+import android.content.Context.CONNECTIVITY_SERVICE
+import android.net.ConnectivityManager
 import android.net.Uri
 import br.com.adalbertofjr.topgames.data.api.TwitchAPI
 import br.com.adalbertofjr.topgames.data.api.model.Game
 import br.com.adalbertofjr.topgames.data.repository.RepositoryResponseListerner
 import br.com.adalbertofjr.topgames.data.repository.TopMoviesRepository
 import br.com.adalbertofjr.topgames.gameslist.domain.model.TopGames
-import br.com.adalbertofjr.topgames.util.isConnected
+import br.com.adalbertofjr.topgames.util.NetworkUtil
 
 /**
  * ListGamesPresenter
@@ -26,7 +27,7 @@ class ListGamesPresenter(val twitchApi: TwitchAPI, val activity: ListGamesActivi
 
     override fun loadGames(refresh: Boolean) {
         // Connection
-        if (!checkConnection(this.activity)) {
+        if (!checkConnection()) {
             view.showSnackBar("Problema com conexão de internet")
             fetchGamesInCache(refresh)
         } else {
@@ -43,8 +44,8 @@ class ListGamesPresenter(val twitchApi: TwitchAPI, val activity: ListGamesActivi
         this.view = view
     }
 
-    override fun checkConnection(context: Context): Boolean {
-        return isConnected(context)
+    override fun checkConnection(): Boolean {
+        return NetworkUtil().isConnected(activity.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager)
     }
 
     override fun onRefresh() {
@@ -128,7 +129,7 @@ class ListGamesPresenter(val twitchApi: TwitchAPI, val activity: ListGamesActivi
     }
 
     private fun limparCache() {
-        if (checkConnection(activity)) {
+        if (checkConnection()) {
             TopMoviesRepository().deleteMoviesFromCache(activity)
         }
     }

@@ -9,9 +9,12 @@ import com.squareup.picasso.Picasso
  * Copyright © 2018. All rights reserved.
  */
 
+class ImageUtil {
 
-fun ImageView.loadImageFrom(url: String) {
-    Picasso.get()
-            .load(url)
-            .into(this)
+    fun loadImage(fromUrl: String, toView: ImageView) {
+        Picasso.get()
+                .load(fromUrl)
+                .into(toView)
+    }
 }
+

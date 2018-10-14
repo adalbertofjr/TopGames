@@ -1,6 +1,5 @@
 package br.com.adalbertofjr.topgames.gameslist
 
-import android.content.Context
 import br.com.adalbertofjr.topgames.data.api.model.Game
 
 /**
@@ -33,6 +32,6 @@ interface ListGamesContract {
 
         fun onRefresh()
 
-        fun checkConnection(context: Context) : Boolean
+        fun checkConnection() : Boolean
     }
 }

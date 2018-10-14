@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import br.com.adalbertofjr.topgames.R
 import br.com.adalbertofjr.topgames.data.api.model.Game
-import br.com.adalbertofjr.topgames.util.loadImageFrom
+import br.com.adalbertofjr.topgames.util.ImageUtil
 import kotlinx.android.synthetic.main.item_list_games.view.*
 
 class ListGamesAdapter(var games: List<Game>) : RecyclerView.Adapter<ListGamesAdapter.ViewHolder>() {
@@ -29,7 +29,7 @@ class ListGamesAdapter(var games: List<Game>) : RecyclerView.Adapter<ListGamesAd
         val game = games.get(position)
 
         holder.card.txv_item_title.text = game.name
-        holder.card.imv_poster.loadImageFrom(url = game.box.large)
+        ImageUtil().loadImage(fromUrl = game.box.large, toView = holder.card.imv_poster)
 
         holder.card.setOnClickListener { _ ->
             Log.i(LOG_TAG, game.name)

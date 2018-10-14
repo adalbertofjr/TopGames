@@ -8,7 +8,8 @@ import br.com.adalbertofjr.topgames.R
 import br.com.adalbertofjr.topgames.data.api.model.Game
 import br.com.adalbertofjr.topgames.root.App
 import br.com.adalbertofjr.topgames.util.Constants
-import br.com.adalbertofjr.topgames.util.loadImageFrom
+import br.com.adalbertofjr.topgames.util.Formatter
+import br.com.adalbertofjr.topgames.util.ImageUtil
 import kotlinx.android.synthetic.main.activity_detail.*
 import javax.inject.Inject
 
@@ -52,10 +53,10 @@ class DetailGameActivity : AppCompatActivity(), DetailGameContract.View {
     }
 
     override fun showDetailGame(game: Game) {
-        imv_detail_poster_back.loadImageFrom(game.box.large)
-        imv_poster_detail.loadImageFrom(game.box.large)
+        ImageUtil().loadImage(fromUrl = game.box.large, toView = imv_detail_poster_back)
+        ImageUtil().loadImage(fromUrl = game.box.large, toView = imv_poster_detail)
         txv_title.text = game.name
-        txv_channel_visualiztions.text = "${game.channels} canais - ${game.viewers} visualizações"
+        txv_channel_visualiztions.text = Formatter().formatChannelView(game.channels, game.viewers)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
